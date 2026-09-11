@@ -1,0 +1,47 @@
+<configuration scan="true">
+    <!-- use Spring default values -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <property name="LOGS" value="files/logs/create"/>
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{ISO8601} %-5level [%t] %logger{36}: MESSAGE = %replace(%msg){'\n'," "s} | EXCEPTION = %replace(%throwable){'\n',' '}%n</Pattern>
+        </layout>
+    </appender>
+
+
+    <appender name="ROLLINGFILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/mediationplatform-opportunity-handler.log</file>
+        <encoder
+                class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d{ISO8601} %-5level [%t] %logger{36}: MESSAGE = %replace(%msg){'\n'," "s} | EXCEPTION = %replace(%throwable){'\n',' '}%n</Pattern>
+        </encoder>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily and when the file reaches 10 MegaBytes -->
+            <fileNamePattern>${LOGS}/archived/mediationplatform-opportunity-handler.log-%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="ROLLINGFILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    <logger name="ch.qos.logback" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.eclipse.jetty" level="WARN"/>
+    <logger name="org.cometd" level="WARN"/>
+    <logger name="sun" level="WARN"/>
+    <!-- LOG "com.MyProject*" at TRACE level -->
+    <logger name="com.MyProject" level="TRACE"/>
+
+</configuration>

@@ -1,0 +1,40 @@
+spring:
+  application:
+    name:
+  profiles:
+    active:
+  cloud:
+    config:
+      uri:
+  main:
+    allow-bean-definition-overriding:
+
+  security:
+    swagger:
+      name:
+      password:
+    jwt:
+      header:
+      prefix:
+      # Token is valid 24 hours
+      token-validity-in-seconds:
+      secretAPIGEE:
+      secret:
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url:
+    operationsSorter:
+    tagsSorter:
+  api-docs:
+    path:
+    enabled:
+    version:
+
+  cache:
+    disabled:

@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "c1b21ee4-8b3c-48c4-9b38-a623f5809794",
+		"name": "TESTS CONCERTO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28710080"
+	},
+	"item": [
+		{
+			"name": "OK GET OPP TEAM MEMBERS",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const postRequest = {\r",
+							"  url: 'https://inside01.api.intraMyProject/oauth/v3/token',\r",
+							"  method: 'POST',\r",
+							"  timeout: 0,\r",
+							"  header: {\r",
+							"    \"Content-Type\": \"application/x-www-form-urlencoded\"\r",
+							"  },\r",
+							"  body: {\r",
+							"    mode: 'urlencoded',\r",
+							"    urlencoded: [\r",
+							"        {key: \"grant_type\", value: \"client_credentials\"},\r",
+							"        {key:\"client_id\", value: \"mtU9QngMCCnukAsN7UplDBsAGAv615lJ\"},\r",
+							"        {key:\"client_secret\", value: \"6pCts8i0qrNyhZ0Z\"},\r",
+							"    ]}\r",
+							"};\r",
+							"pm.sendRequest(postRequest, function (err, res) {\r",
+							"    var responseJson = res.json();\r",
+							"    console.log(responseJson);\r",
+							"    pm.environment.set('ACCESS_TOKEN', responseJson['access_token']);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify that the response body is not empty\", function () {\r",
+							"    const res = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(res).to.be.an('object');\r",
+							"    pm.expect(res).to.not.be.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The 'OpportunityTeam' property is an array\", function () {\r",
+							"  const res = pm.response.json();\r",
+							"\r",
+							"  pm.expect(res.OpportunityTeam).to.be.a('array');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "{{aut_type}}",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-InterfaceBasicat",
+						"value": "concerto"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "      {\r\n        \"Public_Opportunity_ID\": \"71119008\"\r\n        }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{concerto_url}}/customerlinks/v1/opportunityTeamMembers",
+					"host": [
+						"{{concerto_url}}"
+					],
+					"path": [
+						"customerlinks",
+						"v1",
+						"opportunityTeamMembers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KO GET OPP TEAM MEMBERS",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const postRequest = {\r",
+							"  url: 'https://inside01.api.intraMyProject/oauth/v3/token',\r",
+							"  method: 'POST',\r",
+							"  timeout: 0,\r",
+							"  header: {\r",
+							"    \"Content-Type\": \"application/x-www-form-urlencoded\"\r",
+							"  },\r",
+							"  body: {\r",
+							"    mode: 'urlencoded',\r",
+							"    urlencoded: [\r",
+							"        {key: \"grant_type\", value: \"client_credentials\"},\r",
+							"        {key:\"client_id\", value: \"mtU9QngMCCnukAsN7UplDBsAGAv615lJ\"},\r",
+							"        {key:\"client_secret\", value: \"6pCts8i0qrNyhZ0Z\"},\r",
+							"    ]}\r",
+							"};\r",
+							"pm.sendRequest(postRequest, function (err, res) {\r",
+							"    var responseJson = res.json();\r",
+							"    console.log(responseJson);\r",
+							"    pm.environment.set('ACCESS_TOKEN', responseJson['access_token']);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify that the response body is not empty\", function () {\r",
+							"    const res = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(res).to.be.an('object');\r",
+							"    pm.expect(res).to.not.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "{{aut_type}}",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "      {\r\n        \"Public_Opportunity_ID\": \"71119008\"\r\n        }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{concerto_url}}/customerlinks/v1/opportunityTeamMembers",
+					"host": [
+						"{{concerto_url}}"
+					],
+					"path": [
+						"customerlinks",
+						"v1",
+						"opportunityTeamMembers"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

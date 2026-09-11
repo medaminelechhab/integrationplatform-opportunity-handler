@@ -1,0 +1,200 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: service-{{ .Chart.Name }}-v1
+  labels:
+    {{- include "helm.labelsMediation" . | nindent 4 }}
+spec:
+  ports:
+    - port: 85
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Chart.Name }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Values.namespace  }}
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  minReadySeconds: 30
+  progressDeadlineSeconds: 120
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      annotations:
+        co.elastic.logs/enabled: 'true'
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      securityContext:
+        runAsUser: {{ .Values.userId }}
+        runAsGroup: {{ .Values.groupId }}
+      volumes:
+        - name: mediationplatform-log-storage
+          persistentVolumeClaim:
+            claimName: mediationplatform-log-storage
+        - name: "mediationplatform-common-storage"
+          persistentVolumeClaim:
+            claimName: "mediationplatform-common-storage"
+      imagePullSecrets:
+        - name: "mediationplatform-common-secret"
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image }}
+          resources:
+            {{- toYaml .Values.resources  | nindent 12}}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9015
+          volumeMounts:
+            - mountPath: "/home/{{ .Chart.Name }}/files"
+              name: mediationplatform-log-storage
+            - mountPath: "/home/{{ .Chart.Name }}/common"
+              name: "mediationplatform-common-storage"
+          env:
+            - name: EMBEDMONGO_USE_PROXY
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: embedmongo-use-proxy
+
+            - name: MONGO_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: mongo-db-host
+            - name: MONGO_DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: mongo-db-database
+
+            - name: MONGO_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: mongo-db-username
+            - name: MONGO_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: mongo-db-password
+            - name: MONGO_DB_AUTHENTICATION_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: mongo-db-authentication-database
+            - name: GENERATE_QD_HOURS_AGO
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: generate-qd-hours-ago
+            - name: COM_MyProject_LOGGING_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: com-MyProject-logging-level
+            - name: CONFIG_SERVER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: config-server-host
+            - name: JAVA_OPTS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: java-opts
+            - name: CLINKS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-url
+            - name: CLINKS_AUTH_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-auth-url
+            - name: CLINKS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-username
+            - name: CLINKS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-password
+            - name: CLINKS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-client-id
+            - name: CLINKS_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-client-secret
+            - name: CLINKS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-endpoint
+            - name: CLINKS_USE_PROXY
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-use-proxy
+            - name: CLINKS_USE_PROXY_FOR_AUTH
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-use-proxy-for-auth
+            - name: CLINKS_USE_SSL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: clinks-use-ssl
+
+            - name: CONCERTO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: concerto-username
+            - name: CONCERTO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: concerto-password
+            - name: CONCERTO_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: concerto-client-id
+            - name: CONCERTO_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: concerto-client-secret
+            - name: TRUSTSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: truststore-password
+            - name: CERTIFICATE_ALIAS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.namespace }}
+                  key: certificate-alias
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubernetes-v3,teamMember,clinks"

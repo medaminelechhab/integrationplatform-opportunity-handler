@@ -1,0 +1,13 @@
+---
+platform: uat
+ingressUrl: https://dashboard.caas-cnp-apps-np.com.intraMyProject/#/replicationcontroller?namespace=0ko-cl-mptf-uat
+namespace: 0ko-cl-mptf-uat
+env: uat
+image: "${DOCKER_SNAPSHOT_IMAGE}"
+resources:
+  limits:
+    cpu: 1
+    memory: 500Mi
+  requests:
+    cpu: 100m
+    memory: 200Mi

@@ -1,0 +1,14 @@
+include:
+  # Gitlab ci common
+  - project: 'cl-platform/config/common-cicd-config'
+    ref: 'feat-MEDIAPTF-1471'
+    file: '/gitlab-ci-common.yml'
+
+variables:
+  ######### POSTMAN ##############
+  ENABLE_INTEGRATION_TESTS: "true"
+
+  #########  branch names  #############
+  DEV_REF: '/^feat-MEDIAPTF-1553/'
+  UAT_REF: '/^develop/'
+  PROD_REF: '/^(master|main)$/'
